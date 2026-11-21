@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>情報Ⅰまとめ｜データの活用と情報システム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F7FA; --sheet:#FFFFFF; --ink:#1F2A44; --sub:#56627A; --rule:#D6DCE6;
+  --marker:#FFE45C; --pink:#FFB3CF; --red:#D2283C; --redsheet:#E0404F; --navy:#2B3F7A;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131825; --sheet:#1B2232; --ink:#E7EBF3; --sub:#A3ADC2; --rule:#323C52;
+    --marker:#6B5A12; --pink:#6B2A44; --red:#FF6B7A; --redsheet:#B8303E; --navy:#9DB2F0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131825; --sheet:#1B2232; --ink:#E7EBF3; --sub:#A3ADC2; --rule:#323C52;
+  --marker:#6B5A12; --pink:#6B2A44; --red:#FF6B7A; --redsheet:#B8303E; --navy:#9DB2F0;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  font-size:16px;line-height:1.85;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;line-height:1.35;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--navy);outline-offset:2px;border-radius:4px}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--rule)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sheet)}
+.bar{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:8px 16px}
+.brand{font-family:"Zen Old Mincho",serif;font-weight:900;font-size:1.05rem;margin-right:auto;white-space:nowrap}
+nav.tabs{max-width:880px;margin:0 auto;display:flex;gap:4px;padding:0 12px;overflow-x:auto}
+nav.tabs a{flex:1 0 auto;text-align:center;padding:10px 14px;text-decoration:none;color:var(--sub);font-weight:700;border-bottom:3px solid transparent}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--red)}
+.iconbtn{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:4px 12px;font-size:.85rem;cursor:pointer}
+
+main{max-width:880px;margin:0 auto;padding:24px 16px 80px}
+.view{display:none}.view.on{display:block}
+
+/* hero */
+.hero{padding:12px 0 24px}
+.hero h1{font-size:clamp(1.9rem,6vw,2.8rem);font-weight:900;letter-spacing:.02em}
+.hero h1 .yr{display:block;font-size:.5em;color:var(--sub);font-weight:700;letter-spacing:.1em}
+.hero p{color:var(--sub);max-width:36em;margin:.8em 0 0}
+
+/* red sheet */
+mark{background:linear-gradient(transparent 45%,var(--marker) 45%);color:inherit;padding:0 .1em;border-radius:2px}
+mark.p{background:linear-gradient(transparent 45%,var(--pink) 45%)}
+body.sheet mark{background:var(--redsheet);color:transparent;cursor:pointer;user-select:none}
+body.sheet mark.open{background:linear-gradient(transparent 45%,var(--marker) 45%);color:var(--red);font-weight:700}
+.sheetbtn[aria-pressed="true"]{background:var(--redsheet);color:#fff;border-color:var(--redsheet)}
+
+/* chapters */
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;padding:0;list-style:none}
+.toc a{display:block;padding:6px 12px;border:1px solid var(--rule);border-radius:6px;text-decoration:none;color:var(--ink);font-size:.9rem;background:var(--sheet)}
+section.ch{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:24px 20px;margin-bottom:28px}
+section.ch > h2{font-size:1.5rem;font-weight:900}
+.pg{color:var(--sub);font-size:.85rem;margin:.2em 0 1em}
+.q{border-left:4px solid var(--red);padding:2px 0 2px 12px;margin:0 0 1.2em;font-weight:700}
+section.ch h3{font-size:1.1rem;margin:1.6em 0 .5em;padding-bottom:4px;border-bottom:1px dashed var(--rule)}
+section.ch ul{padding-left:1.2em;margin:.4em 0}
+section.ch li{margin:.25em 0}
+.box{border:1px solid var(--rule);border-radius:8px;padding:12px 14px;margin:1em 0;background:var(--paper)}
+.box b{color:var(--navy)}
+.sum{border:2px solid var(--ink);border-radius:8px;padding:14px 16px;margin-top:1.4em}
+.sum strong{font-family:"Zen Old Mincho",serif}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+.tw{overflow-x:auto}
+td,th{border:1px solid var(--rule);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--paper);white-space:nowrap}
+
+/* timeline */
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 20px}
+.chip{border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:.88rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+ol.tl{list-style:none;margin:0;padding:0;position:relative}
+ol.tl::before{content:"";position:absolute;left:62px;top:6px;bottom:6px;width:2px;background:var(--rule)}
+.tl li{display:grid;grid-template-columns:56px 1fr;gap:18px;padding:8px 0;position:relative}
+.tl .y{font-family:"Zen Old Mincho",serif;font-weight:900;font-size:1.1rem;text-align:right}
+.tl li::after{content:"";position:absolute;left:57px;top:17px;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:3px solid var(--c,var(--ink))}
+.tl .ev{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:8px 12px}
+.tl .tag{display:inline-block;font-size:.75rem;padding:0 8px;border-radius:999px;color:#fff;background:var(--c);margin-right:6px;vertical-align:2px}
+.tl .ev small{display:block;color:var(--sub);font-size:.85rem;line-height:1.6;margin-top:2px}
+.tl li.big .ev{border:2px solid var(--red)}
+
+/* cloze */
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+select{font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:6px 8px}
+.btn{border:1px solid var(--ink);background:var(--sheet);border-radius:6px;padding:6px 14px;cursor:pointer;font-weight:700}
+.btn.main{background:var(--ink);color:var(--paper)}
+ol.cloze{padding-left:1.6em;margin:0}
+ol.cloze li{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;margin:0 0 10px}
+.blank{display:inline-block;min-width:5em;border:none;border-bottom:2px solid var(--red);background:transparent;color:transparent;cursor:pointer;padding:0 .3em;margin:0 .15em;line-height:1.4;text-align:center}
+.blank.open{color:var(--red);font-weight:700}
+.chlabel{display:block;font-size:.78rem;color:var(--sub)}
+
+/* qa */
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:24px 20px;min-height:220px;display:flex;flex-direction:column}
+.card .meta{display:flex;justify-content:space-between;color:var(--sub);font-size:.85rem}
+.card .qq{font-size:1.2rem;font-weight:700;margin:18px 0;flex:1}
+.card .ans{font-family:"Zen Old Mincho",serif;font-size:1.5rem;font-weight:900;color:var(--red);min-height:1.6em;margin-bottom:16px}
+.card .ans small{display:block;font-family:"Zen Kaku Gothic New",sans-serif;font-size:.9rem;font-weight:400;color:var(--sub)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1;min-height:44px}
+.progress{height:6px;background:var(--rule);border-radius:3px;margin:16px 0 6px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--red);width:0;transition:width .3s}
+.stat{color:var(--sub);font-size:.88rem}
+.empty{text-align:center;padding:40px 0;color:var(--sub)}
+
+footer{text-align:center;color:var(--sub);font-size:.8rem;padding:24px 16px 40px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:520px){
+  section.ch{padding:18px 14px}
+  ol.tl::before{left:46px}
+  .tl li{grid-template-columns:42px 1fr;gap:16px}
+  .tl li::after{left:41px}
+  .tl .y{font-size:.95rem}
+}
+.tl .y{font-family:ui-monospace,Menlo,monospace;font-size:.85rem}
+.fx{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:0 .3em;font-size:.92em}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <span class="brand">情報Ⅰまとめ</span>
+    <button class="iconbtn sheetbtn" id="sheetBtn" aria-pressed="false" title="重要語句を赤シートで隠す">赤シート</button>
+  </div>
+  <nav class="tabs" aria-label="ページ切り替え">
+    <a href="#summary">まとめ</a>
+    <a href="#timeline">Excel関数</a>
+    <a href="#cloze">穴埋め</a>
+    <a href="#qa">一問一答</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ===== まとめ ===== -->
+  <div class="view" id="v-summary">
+    <div class="hero">
+      <h1><span class="yr">DATA · MODEL · SYSTEM</span>データの活用と情報システム</h1>
+      <p>情報Ⅰ（2学期期末まで）のスライド 教21〜27 を整理した自習用まとめです。プログラミング（Python）は別のサイトにまとめています。上の「赤シート」を押すと、マーカー部分が隠れます。</p>
+    </div>
+    <ul class="toc">
+      <li><a href="#ch-collect">データの収集と整理</a></li>
+      <li><a href="#ch-analysis">データの分析（代表値・散らばり）</a></li>
+      <li><a href="#ch-cross">クロス集計と回帰分析</a></li>
+      <li><a href="#ch-time">時系列分析と移動平均法</a></li>
+      <li><a href="#ch-model">モデル化とシミュレーション</a></li>
+      <li><a href="#ch-system">情報システム</a></li>
+    </ul>
+
+    <section class="ch" id="ch-collect">
+      <h2>データの収集と整理</h2>
+      <p class="pg">教21　教科書 p.156〜157</p>
+      <h3>データの収集</h3>
+      <ul>
+        <li>問題解決には、データを集めて分析し、客観的で信頼できる情報を得ることが必要</li>
+        <li><mark>オープンデータ</mark>：インターネットで公開され、誰でも自由に利用できるデータ。関係者しか見られない非公開のデータは<mark>クローズドデータ</mark></li>
+        <li><mark>標本調査</mark>：データ全体の一部（標本）を取り出して、全体を推測する方法</li>
+      </ul>
+      <div class="tw"><table>
+        <tr><th>形式</th><th>拡張子</th><th>特徴</th></tr>
+        <tr><td>Excel</td><td>.xlsx</td><td>関数で統計データを編集できるが、基本はExcelでしか扱えない</td></tr>
+        <tr><td><mark>CSV</mark></td><td>.csv</td><td>データを<mark>「,」（カンマ）</mark>で区切った形式。さまざまなソフトで扱える</td></tr>
+        <tr><td><mark>XML</mark></td><td>.xml</td><td>データの種類を表す<mark>タグ</mark>＜ ＞でデータを囲んだ形式。さまざまなソフトで扱える</td></tr>
+      </table></div>
+      <p>→ ワードやエクセルのファイルは、オープンデータには向かない。</p>
+
+      <h3>データの整理</h3>
+      <ul>
+        <li>測定値と実際の値のずれ＝<mark>誤差</mark></li>
+        <li>測定値のばらつきが小さいほど<mark>精密</mark>（精度が高い）、測定値の平均と実際の値の差が小さいほど<mark>正確</mark></li>
+        <li><mark>外れ値</mark>：ほかの値から大きく外れた値。統計処理では除くことがあるが、入力ミスなどの<mark>異常値</mark>か、ある条件のときだけ現れる値かは、実験をくり返して比べてから判断する</li>
+        <li><mark>欠損値</mark>：停電や機器の故障、アンケートの記入漏れなどで取れなかったデータ。前後のデータから推測して<mark>補完</mark>することもある</li>
+      </ul>
+
+      <h3>データの種類と尺度水準</h3>
+      <div class="tw"><table>
+        <tr><th>種類</th><th>尺度</th><th>性質</th><th>例</th></tr>
+        <tr><td rowspan="2"><mark>質的データ</mark><br>（数値で計算できない）</td><td><mark>名義尺度</mark></td><td>区別するために名前や番号をつけたもの</td><td>性別、血液型、出席番号</td></tr>
+        <tr><td><mark>順序尺度</mark></td><td>順序には意味があるが、間隔には意味がない</td><td>成績評価、服のサイズ、震度</td></tr>
+        <tr><td rowspan="2"><mark>量的データ</mark><br>（数値で計算できる）</td><td><mark>間隔尺度</mark></td><td>目盛りが等間隔で差に意味があるが、比率には意味がない</td><td>西暦、気温（℃）、体温</td></tr>
+        <tr><td><mark>比例尺度</mark>（比率尺度）</td><td>原点（0）が決まっていて、差にも比にも意味がある</td><td>長さ、重さ、年収</td></tr>
+      </table></div>
+    </section>
+
+    <section class="ch" id="ch-analysis">
+      <h2>データの分析（代表値・散らばり）</h2>
+      <p class="pg">教22　教科書 p.158〜163</p>
+      <div class="tw"><table>
+        <tr><th>指標</th><th>意味</th><th>外れ値の影響</th><th>Excel</th></tr>
+        <tr><td><mark>平均値</mark></td><td>合計 ÷ 個数</td><td><mark>受けやすい</mark></td><td><span class="fx">=AVERAGE(範囲)</span></td></tr>
+        <tr><td><mark>中央値</mark></td><td>大きさの順に並べたとき、ちょうど真ん中の値</td><td><mark>受けにくい</mark></td><td><span class="fx">=MEDIAN(範囲)</span></td></tr>
+        <tr><td><mark>最頻値</mark></td><td>最も頻繁に現れる値</td><td>受けにくい</td><td><span class="fx">=MODE.SNGL(範囲)</span></td></tr>
+      </table></div>
+      <ul>
+        <li><mark>ヒストグラム</mark>：階級を横軸、<mark>度数</mark>を縦軸にしたグラフ。データ全体の特徴（分布）を見る</li>
+        <li>小さい順に並べて下から25%＝<mark>第1四分位数</mark>、50%＝<mark>第2四分位数</mark>（＝中央値）、75%＝<mark>第3四分位数</mark></li>
+        <li><mark>レンジ</mark>（範囲）＝<mark>最大値 − 最小値</mark></li>
+        <li>平均値だけで判断しない：平均点が同じ50点でも、0点と100点に分かれたクラス、全員50点のクラス、25〜75点に散らばったクラスでは中身が違う。貯蓄額のように、平均値が多くの人の実感より高く出る例もある</li>
+      </ul>
+      <h3>散らばりを表す指標</h3>
+      <ul>
+        <li>データの散らばり具合は<mark>分散</mark>や<mark>標準偏差</mark>で表す（ふつうは標準偏差を使う）</li>
+        <li><mark>標準偏差が大きいほど、データの散らばりは大きい</mark>。Excelでは <span class="fx">=STDEV.P(範囲)</span></li>
+        <li>計算式は数学で扱うので、情報では意味と使い方を押さえる</li>
+      </ul>
+    </section>
+
+    <section class="ch" id="ch-cross">
+      <h2>クロス集計と回帰分析</h2>
+      <p class="pg">教23　教科書 p.164〜169</p>
+      <ul>
+        <li><mark>クロス集計</mark>：2つ以上の項目の集計結果をかけ合わせて比べ、特徴を見る方法（例：「地球温暖化を知っているか」を年代別に集計）</li>
+        <li><mark>画像認識</mark>：AIに大量の画像を学習させ、新しい画像が何かを判定させる</li>
+        <li><mark>テキストマイニング</mark>：文章を単語や文節に区切り、出現頻度や関係を分析する</li>
+      </ul>
+      <h3>回帰分析と相関</h3>
+      <ul>
+        <li><mark>回帰分析</mark>：複数のデータの間に成り立つ関係を、関数（式）で表す方法。xが増えるとyはどうなるかを調べる</li>
+        <li>2つの量の関係を点で表すグラフ＝<mark>散布図</mark></li>
+        <li>2つの関係を直線と仮定して近似する＝<mark>直線回帰</mark>、その直線＝<mark>回帰直線</mark></li>
+        <li>相関が強いほど、点は回帰直線の近くに集まる。<mark>相関があっても因果関係があるとは限らない</mark></li>
+      </ul>
+      <div class="box"><b>疑似相関</b>（見かけだけの相関）<br>アイスが売れるとビールも売れる → 本当の原因は<mark>気温</mark>。コンビニが多い地域ほど犯罪が多い → 本当の原因は<mark>人口</mark>の多さ。このように別の要因で生まれる相関を<mark>疑似相関</mark>という。</div>
+      <h3>相関係数</h3>
+      <ul>
+        <li>相関の強さは<mark>相関係数</mark>（r）で表す。Excelでは <span class="fx">=CORREL(範囲A, 範囲B)</span></li>
+        <li>rは<mark>−1から1</mark>の値をとり、<mark>絶対値が1に近いほど相関が強い</mark></li>
+        <li>rが負の値の場合を<mark>負の相関</mark>（逆相関）という</li>
+        <li>一般に、rの絶対値が<mark>0.7以上</mark>で「強い相関がある」という</li>
+      </ul>
+      <div class="tw"><table>
+        <tr><th>rの絶対値</th><th>考え方</th></tr>
+        <tr><td>0.0〜0.2</td><td>ほとんど相関がない</td></tr>
+        <tr><td>0.2〜0.4</td><td>やや相関がある</td></tr>
+        <tr><td>0.4〜0.7</td><td>かなり相関がある</td></tr>
+        <tr><td>0.7〜1.0</td><td>強い相関がある</td></tr>
+      </table></div>
+      <h3>最小二乗法と予測</h3>
+      <ul>
+        <li><mark>最小二乗法</mark>：各点との<mark>y軸方向のずれ</mark>が最も小さくなるように回帰直線を引く方法</li>
+        <li>実際のデータ（実測値）と直線（予測値）のずれ＝<mark>残差</mark></li>
+        <li>直線を表す式＝<mark>回帰式</mark>。実際には測っていない値も<mark>予測</mark>できる</li>
+        <li>例：気温x、かき氷の売上yの回帰式が y = 798.85x + 143.68 なら、26℃のときは 798.85×26 + 143.68 = 約20914</li>
+        <li>x軸とy軸を入れ替えると、回帰直線（回帰式）も変わる</li>
+      </ul>
+      <div class="box"><b>データ分析の流れ</b><br><mark>仮説</mark>を立てる → データを集めて分析（例：相関係数 r = 0.2）→ 結果から<mark>考察</mark>する（やや相関がある。データの年や種類は適切だったか？ほかのデータはないか？）</div>
+    </section>
+
+    <section class="ch" id="ch-time">
+      <h2>時系列分析と移動平均法</h2>
+      <p class="pg">教24　教科書 p.165</p>
+      <ul>
+        <li><mark>時系列データ</mark>：時間とともに変わる量を、時間の順に並べたもの</li>
+        <li>分析すると、全体的な<mark>傾向</mark>をつかんだり、将来を<mark>予測</mark>したりできる</li>
+        <li><mark>移動平均法</mark>：一定の期間のデータの平均を、その期間の代表値とする方法</li>
+        <li>例：5年間の移動平均では、ある年を中心とした5年間の平均を、その年の値とする → 細かい上下がならされ、長期的な変化（気温の上昇など）が見やすくなる</li>
+      </ul>
+    </section>
+
+    <section class="ch" id="ch-model">
+      <h2>モデル化とシミュレーション</h2>
+      <p class="pg">教25・26　教科書 p.170〜187</p>
+      <ul>
+        <li><mark>モデル</mark>：複雑な対象から本質的・重要な部分を抜き出し、<mark>単純化・抽象化</mark>したもの。モデルをつくること＝<mark>モデル化</mark></li>
+        <li><mark>シミュレーション</mark>：モデルを使い、同じ条件で模擬的に実験すること。実際に試すのが危険・困難なこと（飛行機の避難訓練など）に使う</li>
+      </ul>
+      <div class="tw"><table>
+        <tr><th>分類</th><th>意味</th><th>例</th></tr>
+        <tr><td><mark>縮尺モデル</mark>（スケールモデル）</td><td>大きさを変えたモデル（実物大は物理モデルともいう）</td><td>風洞実験の模型</td></tr>
+        <tr><td><mark>数式モデル</mark></td><td>現象を数式で表したモデル</td><td>水量の式</td></tr>
+        <tr><td><mark>図的モデル</mark></td><td>対象の構造を図で表したモデル</td><td>路線図、ベン図、ツリー図</td></tr>
+        <tr><td><mark>静的モデル</mark></td><td>時間の経過が他の要素に影響しない</td><td>円の半径と面積</td></tr>
+        <tr><td><mark>動的モデル</mark></td><td>時間の経過が他の要素に影響する</td><td>落下する物体の運動</td></tr>
+        <tr><td><mark>確定的モデル</mark></td><td>変動する要素がなく、結果が1つに決まる</td><td>一定の速さで走る車の時間と距離</td></tr>
+        <tr><td><mark>確率的モデル</mark></td><td>変動する要素があり、結果が1つに決まらない</td><td>2つのサイコロの目の合計</td></tr>
+      </table></div>
+      <div class="box"><b>実習：容器にたまる水の量（数式モデル）</b><br>流入した水量 ＝ 流入速度 × 時間間隔<br>次の水量 ＝ 今の水量 ＋ 流入した水量<br>流入速度が毎分6Lなら、1分ごとに 0 → 6 → 12 → 18 … Lと増える（動的・確定的モデル）。</div>
+      <ul>
+        <li>確率的モデルの中で、<mark>乱数</mark>を使って問題を解く方法＝<mark>モンテカルロ法</mark></li>
+        <li>Excelの <span class="fx">=RAND()</span> は<mark>0以上1未満</mark>の実数をランダムに出す</li>
+        <li><mark>期待値</mark>：何度も試したときに平均してどれくらいになるか。サイコロ1個の目の期待値は (1+2+3+4+5+6)×1/6 = <mark>3.5</mark>（10個なら合計35）</li>
+        <li>身近な例：文化祭の行列の長さ、ローンの返済年数など、実際に試すのが大変なことをコンピュータで試せる</li>
+        <li>PK戦のシミュレーション（Python）は、プログラミングのサイトにまとめています</li>
+      </ul>
+    </section>
+
+    <section class="ch" id="ch-system">
+      <h2>情報システム</h2>
+      <p class="pg">教27　教科書 p.146〜149</p>
+      <p><mark>情報システム</mark>：ネットワークにつながった情報機器が連携して、さまざまな機能を提供するしくみ。</p>
+      <div class="tw"><table>
+        <tr><th>システム</th><th>ポイント</th></tr>
+        <tr><td><mark>POSシステム</mark></td><td>Point Of Sales（販売時点情報管理）。商品が売れた時点の情報を管理し、発注・配送などに活用</td></tr>
+        <tr><td>予約システム</td><td>列車・飛行機の座席、チケット、宿泊をスマホなどで予約。決済システムと連動</td></tr>
+        <tr><td>気象観測システム</td><td>雨量・風向・気温などを各地で自動観測し、気象情報を提供（アメダスなど）</td></tr>
+        <tr><td>金融情報システム</td><td><mark>ATM</mark>、<mark>インターネットバンキング</mark>、電子マネーやQRコード決済による<mark>キャッシュレス社会</mark></td></tr>
+        <tr><td><mark>GPS</mark></td><td>全地球測位システム。人工衛星の電波で位置を測る</td></tr>
+        <tr><td><mark>ETC</mark></td><td>無線通信で有料道路の料金を自動で支払う</td></tr>
+      </table></div>
+      <ul>
+        <li><mark>クレジットカード</mark>：手持ちのお金がなくても買い物ができ、代金は後で請求される</li>
+        <li><mark>デビットカード</mark>：支払いと同時に銀行口座から引き落とされる。<mark>口座の残高以上は使えない</mark></li>
+        <li><mark>電子マネー</mark>：お金の価値を電子データで表したもの（ICカード型、QRコード、非接触IC方式）</li>
+      </ul>
+      <h3>電子商取引</h3>
+      <ul>
+        <li>ネットワーク上で契約や決済をするしくみ＝<mark>電子商取引</mark>（eコマース）。<mark>ECサイト</mark>はネットで商品を売買できるサイト</li>
+        <li>企業同士＝<mark>B to B</mark>、企業と消費者＝<mark>B to C</mark>、消費者同士＝<mark>C to C</mark></li>
+        <li><mark>レコメンデーション機能</mark>：購買履歴から好みを分析して、興味のありそうな商品を表示する</li>
+      </ul>
+      <h3>新しい技術としくみ</h3>
+      <ul>
+        <li><mark>ブロックチェーン</mark>：<mark>暗号資産</mark>（仮想通貨）の取引データを管理する技術。取引記録（ブロック）を<mark>分散・共有</mark>して互いに監視し、正しさを保証する。管理コストが低いが、法整備が不十分という課題も</li>
+        <li><mark>電子政府</mark>：行政の申請・届出をオンライン化すること。<mark>電子国家</mark>は社会全体をデジタル化すること（エストニアは行政サービスの99%がオンライン）</li>
+        <li><mark>クラウドコンピューティング</mark>：インターネット上のサーバにソフトやデータを置いて使うサービス</li>
+        <li><mark>データベース</mark>：大量のデータを一定のルールで整理し、必要な情報をすばやく取り出す技術</li>
+        <li><mark>ビッグデータ</mark>：大量・多様で、発生頻度（速さ）の高いデータ</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ===== Excel関数 ===== -->
+  <div class="view" id="v-timeline">
+    <div class="hero"><h1><span class="yr">EXCEL FUNCTIONS</span>Excel関数と式</h1>
+      <p>授業で使った Excel 関数と計算式の一覧です。ボタンで種類を絞り込めます。赤枠は特によく出るものです。</p></div>
+    <div class="filters" id="tlFilters"></div>
+    <ol class="tl" id="tl"></ol>
+  </div>
+
+  <!-- ===== 穴埋め ===== -->
+  <div class="view" id="v-cloze">
+    <div class="hero"><h1><span class="yr">FILL IN THE BLANKS</span>穴埋め問題</h1>
+      <p>赤い下線をタップすると答えが出ます。もう一度タップで隠れます。</p></div>
+    <div class="tools">
+      <select id="clozeCh" aria-label="単元を選ぶ"></select>
+      <button class="btn" id="clozeShow">全部見る</button>
+      <button class="btn" id="clozeHide">全部隠す</button>
+      <button class="btn" id="clozeShuffle">シャッフル</button>
+    </div>
+    <ol class="cloze" id="clozeList"></ol>
+  </div>
+
+  <!-- ===== 一問一答 ===== -->
+  <div class="view" id="v-qa">
+    <div class="hero"><h1><span class="yr">Q &amp; A</span>一問一答</h1>
+      <p>答えを確認したら「覚えた」か「もう一回」を選びます。「覚えた」の記録はこのブラウザに保存されます。</p></div>
+    <div class="tools">
+      <select id="qaCh" aria-label="単元を選ぶ"></select>
+      <select id="qaMode" aria-label="出題範囲">
+        <option value="todo">まだ覚えていない問題だけ</option>
+        <option value="all">すべての問題</option>
+      </select>
+      <button class="btn" id="qaReset">記録をリセット</button>
+    </div>
+    <div id="qaBox"></div>
+    <div class="progress"><span id="qaBar"></span></div>
+    <div class="stat" id="qaStat"></div>
+  </div>
+</main>
+<footer>情報Ⅰ 授業スライド（教21〜27）をもとに作成した自習用まとめ</footer>
+
+<script>
+const CH = {
+  data:"データの収集と整理",
+  analysis:"データの分析・回帰",
+  model:"モデル化とシミュレーション",
+  system:"情報システム"
+};
+
+/* ---------- Excel関数（年の欄は fx） ---------- */
+const REG = {"代表値":"#2B6CB0","散らばり":"#2F855A","相関・回帰":"#C05621","シミュレーション":"#805AD5"};
+const TL = [
+  ["fx","代表値","=AVERAGE(範囲)","平均値。外れ値の影響を受けやすい",1],
+  ["fx","代表値","=MEDIAN(範囲)","中央値。外れ値の影響を受けにくい",1],
+  ["fx","代表値","=MODE.SNGL(範囲)","最頻値。最も多く現れる値"],
+  ["式","散らばり","レンジ ＝ 最大値 − 最小値","データの範囲"],
+  ["fx","散らばり","=STDEV.P(範囲)","標準偏差。大きいほど散らばりが大きい",1],
+  ["fx","相関・回帰","=CORREL(範囲A, 範囲B)","相関係数 r（−1〜1）。絶対値0.7以上で強い相関",1],
+  ["式","相関・回帰","y ＝ ax ＋ b","回帰式。例：y = 798.85x + 143.68 に x=26 を入れて売上を予測"],
+  ["fx","シミュレーション","=RAND()","0以上1未満の乱数。モンテカルロ法に使う",1],
+  ["式","シミュレーション","次の水量 ＝ 今の水量 ＋ 流入速度 × 時間間隔","容器にたまる水の量の数式モデル"],
+  ["式","シミュレーション","期待値 ＝ Σ（値 × 確率）","サイコロ1個：(1+2+…+6)×1/6 = 3.5"]
+];
+
+/* ---------- 穴埋めデータ ---------- */
+const CLOZE = [
+  ["data","インターネットで公開され、誰でも自由に使えるデータを[オープンデータ]という。"],
+  ["data","データ全体の一部を取り出して全体を推測する方法を[標本調査]という。"],
+  ["data","[CSV]形式は、データを[カンマ]で区切った形式である。"],
+  ["data","[XML]形式は、データの種類を表す[タグ]でデータを囲んだ形式である。"],
+  ["data","測定値と実際の値のずれを[誤差]という。"],
+  ["data","測定値のばらつきが小さいほど[精密]、平均と実際の値の差が小さいほど[正確]である。"],
+  ["data","ほかの値から大きく外れた値を[外れ値]、取得できなかったデータを[欠損値]という。"],
+  ["data","数値で計算できないデータを[質的データ]、計算できるデータを[量的データ]という。"],
+  ["data","血液型のように区別だけに意味がある尺度を[名義尺度]、成績評価のように順序に意味がある尺度を[順序尺度]という。"],
+  ["data","気温（℃）のように差に意味がある尺度を[間隔尺度]、長さのように比にも意味がある尺度を[比例尺度]という。"],
+  ["analysis","[平均値]は外れ値の影響を受けやすく、[中央値]や[最頻値]は受けにくい。"],
+  ["analysis","階級を横軸、度数を縦軸にしたグラフを[ヒストグラム]という。"],
+  ["analysis","中央値は[第2四分位数]と同じである。"],
+  ["analysis","レンジ＝[最大値]−[最小値]。"],
+  ["analysis","[標準偏差]が大きいほど、データの散らばりは大きい。"],
+  ["analysis","2つ以上の項目をかけ合わせて集計する方法を[クロス集計]という。"],
+  ["analysis","文章を単語に区切り、出現頻度や関係を分析することを[テキストマイニング]という。"],
+  ["analysis","2つの量の関係を点で表したグラフを[散布図]という。"],
+  ["analysis","2つの関係を直線で近似することを[直線回帰]、その直線を[回帰直線]という。"],
+  ["analysis","相関係数は[−1]から[1]の値をとり、絶対値が1に近いほど相関が強い。"],
+  ["analysis","一般に、相関係数の絶対値が[0.7]以上なら強い相関があるという。"],
+  ["analysis","別の要因によって生まれる見かけだけの相関を[疑似相関]という。"],
+  ["analysis","y軸方向のずれが最も小さくなるように回帰直線を引く方法を[最小二乗法]という。"],
+  ["analysis","実測値と予測値のずれを[残差]という。"],
+  ["analysis","一定期間のデータの平均を代表値とする方法を[移動平均法]という。"],
+  ["model","対象の本質的な部分を抜き出して単純化したものを[モデル]という。"],
+  ["model","モデルを使って模擬的に実験することを[シミュレーション]という。"],
+  ["model","時間の経過が他の要素に影響するモデルを[動的モデル]という。"],
+  ["model","変動する要素があり、結果が1つに決まらないモデルを[確率的モデル]という。"],
+  ["model","乱数を使って問題を解く方法を[モンテカルロ法]という。"],
+  ["model","ExcelのRAND関数は[0]以上[1]未満の乱数を発生させる。"],
+  ["model","サイコロ1個を振ったときの目の期待値は[3.5]である。"],
+  ["system","ネットワークにつながった機器が連携して機能を提供するしくみを[情報システム]という。"],
+  ["system","商品が売れた時点の情報を管理するしくみを[POSシステム]という。"],
+  ["system","人工衛星の電波で位置を測るしくみを[GPS]という。"],
+  ["system","支払いと同時に口座から引き落とされるカードを[デビットカード]という。"],
+  ["system","企業と消費者の間の電子商取引を[B to C]、消費者同士の取引を[C to C]という。"],
+  ["system","購買履歴から好みの商品をすすめる機能を[レコメンデーション機能]という。"],
+  ["system","暗号資産の取引データを分散・共有して管理する技術を[ブロックチェーン]という。"],
+  ["system","大量・多様で発生頻度の高いデータを[ビッグデータ]という。"]
+];
+
+/* ---------- 一問一答データ ---------- */
+const QA = [
+  ["data","誰でも自由に利用できる、公開されたデータは？","オープンデータ"],
+  ["data","関係者しか見られない非公開のデータは？","クローズドデータ"],
+  ["data","データ全体の一部を取り出して全体を推測する調査は？","標本調査"],
+  ["data","データをカンマで区切ったファイル形式は？","CSV","拡張子 .csv"],
+  ["data","タグでデータを囲んだファイル形式は？","XML","拡張子 .xml"],
+  ["data","測定値と実際の値とのずれを何という？","誤差"],
+  ["data","測定値のばらつきが小さいことを何という？","精密（精度が高い）"],
+  ["data","入力ミスなど、原因がはっきりした外れ値を何という？","異常値"],
+  ["data","取得できなかったデータを何という？","欠損値"],
+  ["data","性別・血液型などの尺度は？","名義尺度"],
+  ["data","服のサイズ・成績評価などの尺度は？","順序尺度"],
+  ["data","西暦・気温（℃）などの尺度は？","間隔尺度"],
+  ["data","長さ・重さ・年収などの尺度は？","比例尺度（比率尺度）"],
+  ["analysis","外れ値の影響を受けやすい代表値は？","平均値"],
+  ["analysis","大きさ順に並べたときの真ん中の値は？","中央値"],
+  ["analysis","最も多く現れる値は？","最頻値"],
+  ["analysis","中央値を求めるExcel関数は？","MEDIAN"],
+  ["analysis","最大値と最小値の差を何という？","レンジ（範囲）"],
+  ["analysis","下から75%の位置の値は？","第3四分位数"],
+  ["analysis","データの散らばりを表す指標を2つ挙げると？","分散・標準偏差"],
+  ["analysis","標準偏差を求めるExcel関数は？","STDEV.P"],
+  ["analysis","2つ以上の項目をかけ合わせて集計する方法は？","クロス集計"],
+  ["analysis","文章の単語の出現頻度などを分析する方法は？","テキストマイニング"],
+  ["analysis","複数のデータの関係を式で表す分析は？","回帰分析"],
+  ["analysis","2つの量の関係を点で表すグラフは？","散布図"],
+  ["analysis","相関係数を求めるExcel関数は？","CORREL"],
+  ["analysis","相関係数がとる値の範囲は？","−1から1"],
+  ["analysis","相関係数が負の値のときの相関は？","負の相関（逆相関）"],
+  ["analysis","アイスとビールの売上の相関のように、別の原因による相関は？","疑似相関","本当の原因は気温"],
+  ["analysis","回帰直線を引くとき、y軸方向のずれを最小にする方法は？","最小二乗法"],
+  ["analysis","実測値と予測値の差は？","残差"],
+  ["analysis","時間の順に並べたデータは？","時系列データ"],
+  ["analysis","一定期間の平均を代表値として変化をならす方法は？","移動平均法"],
+  ["model","対象を単純化・抽象化したものは？","モデル"],
+  ["model","風洞実験の模型のような、大きさを変えたモデルは？","縮尺モデル（スケールモデル）"],
+  ["model","路線図やツリー図のようなモデルは？","図的モデル"],
+  ["model","円の半径と面積のように、時間が影響しないモデルは？","静的モデル"],
+  ["model","一定の速さで走る車の距離のように、結果が1つに決まるモデルは？","確定的モデル"],
+  ["model","乱数を使って問題を解く方法は？","モンテカルロ法"],
+  ["model","0以上1未満の乱数を出すExcel関数は？","RAND"],
+  ["model","サイコロ10個を振ったときの目の合計の期待値は？","35","1個あたり3.5"],
+  ["system","販売時点の情報を管理するシステムは？","POSシステム"],
+  ["system","有料道路の料金を無線で自動支払いするシステムは？","ETC"],
+  ["system","口座残高以上は使えないカードは？","デビットカード"],
+  ["system","ネット上で契約や決済をするしくみは？","電子商取引（eコマース）"],
+  ["system","企業同士の電子商取引は？","B to B"],
+  ["system","行政の手続きをオンライン化することは？","電子政府"],
+  ["system","行政サービスの99%がオンラインで完結する国は？","エストニア"],
+  ["system","インターネット上のサーバにソフトやデータを置いて使うサービスは？","クラウドコンピューティング"],
+  ["system","大量のデータを整理して、必要な情報をすばやく取り出す技術は？","データベース"]
+];
+
+/* ---------- ユーティリティ ---------- */
+const $ = s => document.querySelector(s);
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+const shuffle = a => {a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc = s => s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function chOptions(sel){
+  sel.innerHTML = `<option value="all">すべての単元</option>` +
+    Object.entries(CH).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+}
+
+/* ---------- ルーティング ---------- */
+const VIEWS = ["summary","timeline","cloze","qa"];
+function route(){
+  const h = location.hash.slice(1);
+  let v = VIEWS.includes(h) ? h : (h.startsWith("ch-") ? "summary" : "summary");
+  document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on", el.id==="v-"+v));
+  document.querySelectorAll("nav.tabs a").forEach(a=>{
+    if(a.getAttribute("href")==="#"+v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+  });
+  if(h.startsWith("ch-")){const t=document.getElementById(h); if(t) t.scrollIntoView();}
+  else window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+
+/* ---------- 赤シート ---------- */
+const sheetBtn = $("#sheetBtn");
+function setSheet(on){
+  document.body.classList.toggle("sheet",on);
+  sheetBtn.setAttribute("aria-pressed",on);
+  document.querySelectorAll("mark.open").forEach(m=>m.classList.remove("open"));
+  store.set("joho-sheet",on);
+}
+sheetBtn.addEventListener("click",()=>setSheet(!document.body.classList.contains("sheet")));
+document.addEventListener("click",e=>{
+  const m = e.target.closest("mark");
+  if(m && document.body.classList.contains("sheet")) m.classList.toggle("open");
+});
+
+/* ---------- 年表 ---------- */
+let tlReg = "all";
+function renderTL(){
+  const f = $("#tlFilters");
+  f.innerHTML = [["all","すべて"],...Object.keys(REG).map(r=>[r,r])]
+    .map(([k,l])=>`<button class="chip" data-r="${k}" aria-pressed="${k===tlReg}">${l}</button>`).join("");
+  $("#tl").innerHTML = TL.filter(e=>tlReg==="all"||e[1]===tlReg).map(([y,r,t,d,big])=>
+    `<li class="${big?"big":""}" style="--c:${REG[r]}"><span class="y">${y}</span>
+     <div class="ev"><span class="tag">${r}</span><b>${t}</b>${d?`<small>${d}</small>`:""}</div></li>`).join("");
+}
+$("#tlFilters").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(b){tlReg=b.dataset.r; renderTL();}});
+
+/* ---------- 穴埋め ---------- */
+let clozeOrder = CLOZE.map((_,i)=>i);
+function renderCloze(){
+  const ch = $("#clozeCh").value;
+  $("#clozeList").innerHTML = clozeOrder.map(i=>CLOZE[i]).filter(c=>ch==="all"||c[0]===ch).map(([c,s])=>{
+    const html = esc(s).replace(/\[([^\]]+)\]/g,(_,a)=>`<button class="blank" aria-label="答えを見る">${a}</button>`);
+    return `<li><span class="chlabel">${CH[c]}</span>${html}</li>`;
+  }).join("");
+}
+$("#clozeList").addEventListener("click",e=>{
+  const b=e.target.closest(".blank"); if(!b) return;
+  b.classList.toggle("open"); b.setAttribute("aria-label", b.classList.contains("open")?"答えを隠す":"答えを見る");
+});
+$("#clozeCh").addEventListener("change",renderCloze);
+$("#clozeShow").addEventListener("click",()=>document.querySelectorAll(".blank").forEach(b=>b.classList.add("open")));
+$("#clozeHide").addEventListener("click",()=>document.querySelectorAll(".blank").forEach(b=>b.classList.remove("open")));
+$("#clozeShuffle").addEventListener("click",()=>{clozeOrder=shuffle(clozeOrder); renderCloze();});
+
+/* ---------- 一問一答 ---------- */
+let known = new Set(store.get("joho-known",[]));
+let deck = [], pos = 0, revealed = false;
+function pool(){
+  const ch=$("#qaCh").value, mode=$("#qaMode").value;
+  return QA.map((q,i)=>i).filter(i=>(ch==="all"||QA[i][0]===ch)&&(mode==="all"||!known.has(i)));
+}
+function newDeck(){deck=shuffle(pool()); pos=0; revealed=false; renderQA();}
+function renderQA(){
+  const ch=$("#qaCh").value;
+  const total = QA.filter(q=>ch==="all"||q[0]===ch).length;
+  const done = QA.filter((q,i)=>(ch==="all"||q[0]===ch)&&known.has(i)).length;
+  $("#qaBar").style.width = total? (done/total*100)+"%" : "0";
+  $("#qaStat").textContent = `覚えた問題 ${done} / ${total}`;
+  const box=$("#qaBox");
+  if(pos>=deck.length){
+    box.innerHTML = `<div class="card"><div class="empty">${deck.length? "このセットは終わりです。":"この範囲はすべて覚えました。"}<br><br>
+      <button class="btn main" id="qaAgain">${deck.length?"もう一周する":"すべての問題で復習する"}</button></div></div>`;
+    $("#qaAgain").onclick=()=>{ if(!deck.length) $("#qaMode").value="all"; newDeck(); };
+    return;
+  }
+  const i=deck[pos], [c,q,a,note]=QA[i];
+  box.innerHTML = `<div class="card">
+    <div class="meta"><span>${CH[c]}</span><span>${pos+1} / ${deck.length}</span></div>
+    <div class="qq">${esc(q)}</div>
+    <div class="ans" aria-live="polite">${revealed? esc(a)+(note?`<small>${esc(note)}</small>`:""):""}</div>
+    <div class="row">${revealed
+      ? `<button class="btn" id="qaNo">もう一回</button><button class="btn main" id="qaYes">覚えた</button>`
+      : `<button class="btn main" id="qaShow">答えを見る</button>`}</div></div>`;
+  if(revealed){
+    $("#qaYes").onclick=()=>{known.add(i); store.set("joho-known",[...known]); pos++; revealed=false; renderQA();};
+    $("#qaNo").onclick=()=>{deck.push(i); pos++; revealed=false; renderQA();};
+  } else $("#qaShow").onclick=()=>{revealed=true; renderQA();};
+}
+$("#qaCh").addEventListener("change",newDeck);
+$("#qaMode").addEventListener("change",newDeck);
+$("#qaReset").addEventListener("click",()=>{ if(confirm("「覚えた」の記録をすべて消しますか？")){known=new Set(); store.set("joho-known",[]); newDeck();} });
+
+/* ---------- 初期化 ---------- */
+chOptions($("#clozeCh")); chOptions($("#qaCh"));
+renderTL(); renderCloze(); newDeck();
+if(store.get("joho-sheet",false)) setSheet(true);
+route();
+</script>
+</body>
+</html>
